@@ -1,4 +1,4 @@
-function storeSession() {
+function storeCurrentSession() {
   chrome.windows.getCurrent(function(win) {
     console.log(win);
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
@@ -35,7 +35,7 @@ function storeSession() {
                 chrome.windows.create();
               }
             });
-            //chrome.windows.remove(currentWindow.id);
+            chrome.windows.remove(currentWindow.id);
           });
         });
       });
@@ -152,7 +152,7 @@ function loadSession(sessionId) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById("storeSession").addEventListener('click', storeSession);
+  document.getElementById("storeCurrentSession").addEventListener('click', storeCurrentSession);
   document.getElementById("showSessions").addEventListener('click', showSessions);
   document.getElementById("showSessionsConsole").addEventListener('click', showSessionsConsole);
   document.getElementById("clearSessions").addEventListener('click', reset);
