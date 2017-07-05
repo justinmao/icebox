@@ -12,8 +12,7 @@ function storeCurrentSession() {
           height: win.height,
           incognito: win.incognito,
           left: win.left,
-          top: win.top,
-          state: win.state
+          top: win.top
         }
         // Initialize if no existing sessions are found.
         if (sessions == null) {
@@ -134,8 +133,7 @@ function loadSession(sessionId) {
       height: targetSession.height,
       incognito: targetSession.incognito,
       left: targetSession.left,
-      top: targetSession.top,
-      state: targetSession.state
+      top: targetSession.top
     }, function() {
       // Update the saved session list.
       var sessionIndex = sessions.indexOf(targetSession)
