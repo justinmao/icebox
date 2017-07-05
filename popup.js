@@ -26,9 +26,10 @@ function storeSession() {
 function showSessions() {
   chrome.storage.sync.get('sessions', function(items) {
     sessions = items.sessions;
+    $('#sessions').empty();
     // Bugs out if sessions is undefined.
     for (var i = 0; i < sessions.length; ++i) {
-      $("#sessions ul").append('<li>' + sessions[i] + '</li>');
+      $('#sessions').append('<li>' + sessions[i] + '</li>');
     }
   });
 }
