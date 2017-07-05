@@ -45,7 +45,7 @@ function storeCurrentSession() {
 function showSessions() {
   chrome.storage.local.get('sessions', function(items) {
     var sessions = items.sessions;
-    $('#sessions').empty();
+    document.getElementById('sessions').innerHTML = '';
     // Pass an empty object if no sessions are found.
     if (sessions == null) {
       sessions = {};
@@ -75,7 +75,7 @@ function showSessions() {
         sessionString += '<div class="extraTabs"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></div>';
       }
       sessionString += '</div>';
-      $('#sessions').append(sessionString);
+      document.getElementById('sessions').innerHTML += sessionString;
       // Assign click listeners to buttons.
       // This needs to be done after the above, otherwise getElementById returns null.
       for (var j = 0; j < sessionIds.length; ++j) {
