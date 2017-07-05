@@ -1,0 +1,26 @@
+body {
+  background-color: white;
+  width: 300px;
+}
+
+#sessions {
+  display: flex;
+  flex-direction: column;
+}
+
+.session {
+  display: flex;
+  flex-direction: row;
+  width: 240px;
+  justify-content: flex-start;
+  background-color: green;
+  overflow: hidden;
+}
+
+.tab {
+  height: 16px;
+  width: 16px;
+  padding: 2px;
+  background-image: chrome://favicon/;
+  flex-shrink: 0;
+}

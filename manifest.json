@@ -9,6 +9,7 @@
   },
 
   "permissions": [
+    "chrome://favicon/",
     "tabs",
     "storage"
   ]
