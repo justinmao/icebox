@@ -3,14 +3,19 @@ function storeSession() {
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
       // Retrieve existing sessions from persistent storage.
       chrome.storage.local.get('sessions', function(items) {
-        sessions = items.sessions;
+        var sessions = items.sessions;
+        var session = {
+          // Placeholder ID generation.
+          id: Date.now(),
+          tabs: tabs
+        }
         // Initialize if no existing sessions are found.
         if (sessions == null) {
           console.log("Initializing session storage.");
-          sessions = [tabs];
+          sessions = [session];
         } else {
           console.log("Session storage successfully retrieved.");
-          sessions.push(tabs);
+          sessions.push(session);
         }
         // Save the updated session list in persistent storage.
         chrome.storage.local.set({'sessions': sessions}, function() {
@@ -24,13 +29,8 @@ function storeSession() {
 }
 
 function showSessions() {
-  var ignoredUrls = [
-    "chrome://extensions",
-    "chrome://history",
-    "chrome://settings",
-  ];
   chrome.storage.local.get('sessions', function(items) {
-    sessions = items.sessions;
+    var sessions = items.sessions;
     $('#sessions').empty();
     // Pass an empty object if no sessions are found.
     if (sessions == null) {
@@ -39,17 +39,35 @@ function showSessions() {
     for (var i = 0; i < sessions.length; ++i) {
       var session = sessions[i];
       var sessionString = '<div class="session">';
+      var sessionIds = [];
       // Build append string.
-      for (var j = 0; j < session.length; ++j) {
-        var tab = session[j];
+      sessionString += '<button id="' + session.id + '" class="sessionButton">^</button>';
+      sessionIds.push(session.id.toString());
+      var iconCount = 0;
+      for (var j = 0; j < session.tabs.length && iconCount < 10; ++j) {
+        var tab = session.tabs[j];
         // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
         if (tab.favIconUrl != null) {
           if (!tab.favIconUrl.includes("chrome://")) {
-            sessionString += '<img class="tab" src=' + tab.favIconUrl + '>'
+            sessionString += '<img class="tab" src=' + tab.favIconUrl + '>';
+            ++iconCount;
           }
         }
       }
-      $('#sessions').append(sessionString + '</div>');
+      // Display dots if icons overflow.
+      if (session.tabs.length > 10) {
+        sessionString += '+';
+      }
+      sessionString += '</div>';
+      $('#sessions').append(sessionString);
+      // Assign click listeners to buttons.
+      // This needs to be done after the above, otherwise getElementById returns null.
+      for (var j = 0; j < sessionIds.length; ++j) {
+        sessionId = sessionIds[j];
+        document.getElementById(sessionId).addEventListener('click', function(event) {
+          loadSession(event.target.id);
+        });
+      }
     }
   });
 }
@@ -70,6 +88,39 @@ function reset() {
   });
 }
 
+function loadSession(sessionId) {
+  chrome.storage.local.get('sessions', function(items) {
+    var sessions = items.sessions;
+    var urlsToLoad = [];
+    var targetSession;
+    // Find the session matching the ID.
+    for (var i = 0; i < sessions.length; ++i) {
+      var session = sessions[i];
+      if (session.id == parseInt(sessionId)) {
+        targetSession = session;
+        break;
+      }
+    }
+    // Create a new window with the session urls.
+    for (var j = 0; j < targetSession.tabs.length; ++j) {
+      var tab = targetSession.tabs[j];
+      urlsToLoad.push(tab.url);
+    }
+    chrome.windows.create({url: urlsToLoad}, function() {
+      // Update the saved session list.
+      var sessionIndex = sessions.indexOf(targetSession)
+      if (sessionIndex >= 0) {
+        sessions.splice(sessionIndex, 1);
+        chrome.storage.local.set({'sessions': sessions}, function() {
+          // Call view update function.
+          console.log("Saved updated sessions.");
+          showSessions();
+        });
+      }
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("storeSession").addEventListener('click', storeSession);
   document.getElementById("showSessions").addEventListener('click', showSessions);
@@ -77,4 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("clearSessions").addEventListener('click', reset);
 });
 
-document.onload = showSessions();
+window.addEventListener('load', function () {
+  showSessions();
+});

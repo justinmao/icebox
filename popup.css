@@ -11,7 +11,7 @@ body {
 .session {
   display: flex;
   flex-direction: row;
-  width: 240px;
+  width: 220px;
   justify-content: flex-start;
   background-color: green;
   overflow: hidden;
@@ -21,6 +21,12 @@ body {
   height: 16px;
   width: 16px;
   padding: 2px;
-  background-image: chrome://favicon/;
+  flex-shrink: 0;
+}
+
+.sessionButton {
+  height: 16px;
+  width: 16px;
+  padding: 2px;
   flex-shrink: 0;
 }
