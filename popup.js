@@ -1,5 +1,6 @@
 function storeSession() {
   chrome.windows.getCurrent(function(win) {
+    console.log(win);
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
       // Retrieve existing sessions from persistent storage.
       chrome.storage.local.get('sessions', function(items) {
@@ -7,7 +8,12 @@ function storeSession() {
         var session = {
           // Placeholder ID generation.
           id: Date.now(),
-          tabs: tabs
+          tabs: tabs,
+          height: win.height,
+          incognito: win.incognito,
+          left: win.left,
+          top: win.top,
+          state: win.state
         }
         // Initialize if no existing sessions are found.
         if (sessions == null) {
@@ -29,7 +35,7 @@ function storeSession() {
                 chrome.windows.create();
               }
             });
-            chrome.windows.remove(currentWindow.id);
+            //chrome.windows.remove(currentWindow.id);
           });
         });
       });
@@ -123,7 +129,14 @@ function loadSession(sessionId) {
       var tab = targetSession.tabs[j];
       urlsToLoad.push(tab.url);
     }
-    chrome.windows.create({url: urlsToLoad}, function() {
+    chrome.windows.create({
+      url: urlsToLoad,
+      height: targetSession.height,
+      incognito: targetSession.incognito,
+      left: targetSession.left,
+      top: targetSession.top,
+      state: targetSession.state
+    }, function() {
       // Update the saved session list.
       var sessionIndex = sessions.indexOf(targetSession)
       if (sessionIndex >= 0) {
