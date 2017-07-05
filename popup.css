@@ -11,22 +11,35 @@ body {
 .session {
   display: flex;
   flex-direction: row;
-  width: 240px;
+  width: 288px;
   justify-content: flex-start;
-  background-color: green;
+  align-items: center;
   overflow: hidden;
 }
 
 .tab {
-  height: 16px;
-  width: 16px;
+  height: 20px;
+  width: 20px;
   padding: 2px;
   flex-shrink: 0;
+  background-color: white;
 }
 
 .sessionButton {
-  height: 16px;
-  width: 16px;
+  height: 20px;
+  width: 20px;
   padding: 2px;
   flex-shrink: 0;
+  font-size: 16px;
+  background-color: grey;
+}
+
+.extraTabs {
+  height: 20px;
+  width: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  flex-shrink: 0;
+  font-size: 16px;
 }

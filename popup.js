@@ -50,7 +50,9 @@ function showSessions() {
       var sessionString = '<div class="session">';
       var sessionIds = [];
       // Build append string.
-      sessionString += '<button id="' + session.id + '" class="sessionButton">^</button>';
+      sessionString += '<button id="' + session.id + '" class="sessionButton">'
+        + '^'
+        + '</button>';
       sessionIds.push(session.id.toString());
       var iconCount = 0;
       for (var j = 0; j < session.tabs.length && iconCount < 10; ++j) {
@@ -65,7 +67,7 @@ function showSessions() {
       }
       // Display dots if icons overflow.
       if (session.tabs.length > 10) {
-        sessionString += '+';
+        sessionString += '<div class="extraTabs"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></div>';
       }
       sessionString += '</div>';
       $('#sessions').append(sessionString);
@@ -74,6 +76,7 @@ function showSessions() {
       for (var j = 0; j < sessionIds.length; ++j) {
         sessionId = sessionIds[j];
         document.getElementById(sessionId).addEventListener('click', function(event) {
+          console.log(event.target);
           loadSession(event.target.id);
         });
       }
@@ -105,6 +108,8 @@ function loadSession(sessionId) {
     var urlsToLoad = [];
     var targetSession;
     // Find the session matching the ID.
+    console.log(sessions);
+    console.log(sessionId);
     for (var i = 0; i < sessions.length; ++i) {
       var session = sessions[i];
       if (session.id == parseInt(sessionId)) {
@@ -113,6 +118,7 @@ function loadSession(sessionId) {
       }
     }
     // Create a new window with the session urls.
+    console.log(targetSession);
     for (var j = 0; j < targetSession.tabs.length; ++j) {
       var tab = targetSession.tabs[j];
       urlsToLoad.push(tab.url);
