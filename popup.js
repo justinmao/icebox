@@ -22,6 +22,15 @@ function storeSession() {
           // Call view update function.
           console.log("Saved updated sessions.");
           showSessions();
+          chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
+            // Open a new window if no other windows are open.
+            chrome.windows.getAll(function(openWindows) {
+              if (openWindows.length == 1) {
+                chrome.windows.create();
+              }
+            });
+            chrome.windows.remove(currentWindow.id);
+          });
         });
       });
     });
@@ -72,6 +81,7 @@ function showSessions() {
   });
 }
 
+// For debug/development use.
 function showSessionsConsole() {
   chrome.storage.local.get('sessions', function(items) {
     sessions = items.sessions;
@@ -79,6 +89,7 @@ function showSessionsConsole() {
   });
 }
 
+// For debug/development use.
 function reset() {
   chrome.storage.local.remove('sessions', function() {
     chrome.storage.local.get('sessions', function(items) {

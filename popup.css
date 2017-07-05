@@ -11,7 +11,7 @@ body {
 .session {
   display: flex;
   flex-direction: row;
-  width: 220px;
+  width: 240px;
   justify-content: flex-start;
   background-color: green;
   overflow: hidden;
