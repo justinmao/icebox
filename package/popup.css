@@ -105,12 +105,6 @@ body {
   cursor: pointer;
 }
 
-#clearSessions:active {
-  cursor: pointer;
-  background-color: #EDB73E;
-  border-color: #EDB73E;
-}
-
 #emptySessions {
   padding-left: 24px;
   padding-right: 24px;
