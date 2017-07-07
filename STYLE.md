@@ -15,4 +15,6 @@
 
 | Name                       | Color     |
 | -------------------------- | --------- |
-| `background-color`         | `#006699` |
+| `background-dark-blue`     | `#006699` |
+| `clear-sessions-orange`    | `#F9C646` |
+| `clear-sessions-red`       | `#E55151` |
