@@ -31,6 +31,10 @@ body {
   cursor: pointer;
 }
 
+#icebox:active {
+  background-image: url('assets/icebox-open-save-onclick.png');
+}
+
 #dots {
   height: 10px;
   width: 100%;
