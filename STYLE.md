@@ -10,3 +10,9 @@
 | `icebox-white-shade-light` | `#F4F4F4` |
 | `icebox-white-shade-dark`  | `#E6E6E6` |
 | `save-icon-grey`           | `#4D4D4D` |
+
+## Popup
+
+| Name                       | Color     |
+| -------------------------- | --------- |
+| `background-color`         | `#006699` |
