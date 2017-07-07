@@ -1,6 +1,5 @@
 function storeCurrentSession() {
   chrome.windows.getCurrent(function(win) {
-    console.log(win);
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
       // Retrieve existing sessions from persistent storage.
       chrome.storage.local.get('sessions', function(items) {
@@ -16,16 +15,13 @@ function storeCurrentSession() {
         }
         // Initialize if no existing sessions are found.
         if (sessions == null) {
-          console.log("Initializing session storage.");
           sessions = [session];
         } else {
-          console.log("Session storage successfully retrieved.");
           sessions.push(session);
         }
         // Save the updated session list in persistent storage.
         chrome.storage.local.set({'sessions': sessions}, function() {
           // Call view update function.
-          console.log("Saved updated sessions.");
           showSessions();
           chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
             // Open a new window if no other windows are open.
@@ -51,7 +47,6 @@ function showSessions() {
       sessions = {length: 0};
       document.getElementById("emptySessions").style.display = "block";
     }
-    console.log(sessions.length);
     var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
       document.getElementById("emptySessions").style.display = "none";
@@ -113,7 +108,6 @@ function loadSession(sessionId) {
       }
     }
     // Create a new window with the session urls.
-    console.log(targetSession);
     for (var j = 0; j < targetSession.tabs.length; ++j) {
       var tab = targetSession.tabs[j];
       urlsToLoad.push(tab.url);
@@ -131,7 +125,6 @@ function loadSession(sessionId) {
         sessions.splice(sessionIndex, 1);
         chrome.storage.local.set({'sessions': sessions}, function() {
           // Call view update function.
-          console.log("Saved updated sessions.");
           showSessions();
         });
       }
