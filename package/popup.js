@@ -45,12 +45,12 @@ function showSessions() {
     // Pass an empty object if no sessions are found.
     if (sessions == undefined || sessions.length == 0) {
       sessions = {length: 0};
-      document.getElementById("emptySessions").style.display = "block";
-      document.getElementById('clearSessions').style.display = "none";
+      document.getElementById('empty-sessions').style.display = "block";
+      document.getElementById('clear-sessions').style.display = "none";
     }
     var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
-      document.getElementById("emptySessions").style.display = "none";
+      document.getElementById('empty-sessions').style.display = "none";
       var session = sessions[i];
       var sessionString = '<div id="' + session.id + '" class="session">';
       // Build append string.
@@ -78,8 +78,8 @@ function showSessions() {
         });
       }
       // Add clear sessions button.
-      document.getElementById('clearSessions').style.display = "block";
-      document.getElementById('clearSessions').addEventListener('click', clearSessions);
+      document.getElementById('clear-sessions').style.display = "block";
+      document.getElementById('clear-sessions').addEventListener('click', clearSessions);
     }
   });
 }
@@ -93,11 +93,11 @@ function showSessionsConsole() {
 }
 
 function clearSessions() {
-  document.getElementById('clearSessions').innerHTML = 'Click me again to confirm!';
+  document.getElementById('clear-sessions').innerHTML = 'Click me again to confirm!';
   // Update button style.
-  document.getElementById("clearSessions").style.background = "#E55151";
-  document.getElementById("clearSessions").style.borderColor = "#E55151";
-  document.getElementById('clearSessions').addEventListener('click', function() {
+  document.getElementById("clear-sessions").style.background = "#E55151";
+  document.getElementById("clear-sessions").style.borderColor = "#E55151";
+  document.getElementById('clear-sessions').addEventListener('click', function() {
     chrome.storage.local.remove('sessions', showSessions);
   });
 }
