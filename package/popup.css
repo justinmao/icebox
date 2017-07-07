@@ -45,6 +45,13 @@ body {
   margin-bottom: 12px;
 }
 
+#main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 #sessions {
   display: flex;
   flex-direction: column;

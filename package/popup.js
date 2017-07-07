@@ -43,9 +43,10 @@ function showSessions() {
     var sessions = items.sessions;
     document.getElementById('sessions').innerHTML = '';
     // Pass an empty object if no sessions are found.
-    if (sessions == null) {
+    if (sessions == undefined || sessions.length == 0) {
       sessions = {length: 0};
       document.getElementById("emptySessions").style.display = "block";
+      document.getElementById('clearSessions').style.display = "none";
     }
     var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
@@ -72,11 +73,12 @@ function showSessions() {
       for (var j = 0; j < sessionIds.length; ++j) {
         sessionId = sessionIds[j];
         document.getElementById(sessionId).addEventListener('click', function(event) {
+          console.log("Clicked" + sessionId);
           loadSession(event.target.id);
         });
       }
       // Add clear sessions button.
-      document.getElementById('sessions').innerHTML += '<div id="clearSessions">Remove All Sessions</div>';
+      document.getElementById('clearSessions').style.display = "block";
       document.getElementById('clearSessions').addEventListener('click', clearSessions);
     }
   });
@@ -140,5 +142,9 @@ function loadSession(sessionId) {
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById("icebox").addEventListener('click', storeCurrentSession);
-  showSessions();
+
 });
+
+window.onload = function() {
+  showSessions();
+}
