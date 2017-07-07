@@ -91,7 +91,13 @@ function showSessionsConsole() {
 }
 
 function clearSessions() {
-  chrome.storage.local.remove('sessions', showSessions);
+  document.getElementById('clearSessions').innerHTML = 'Click me again to confirm!';
+  // Update button style.
+  document.getElementById("clearSessions").style.background = "#E55151";
+  document.getElementById("clearSessions").style.borderColor = "#E55151";
+  document.getElementById('clearSessions').addEventListener('click', function() {
+    chrome.storage.local.remove('sessions', showSessions);
+  });
 }
 
 function loadSession(sessionId) {
