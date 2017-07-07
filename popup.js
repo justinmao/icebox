@@ -48,8 +48,10 @@ function showSessions() {
     document.getElementById('sessions').innerHTML = '';
     // Pass an empty object if no sessions are found.
     if (sessions == null) {
-      sessions = {};
+      sessions = {length: 0};
+      document.getElementById("emptySessions").style.display = "block";
     }
+    console.log(sessions.length);
     var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
       document.getElementById("emptySessions").style.display = "none";
@@ -70,8 +72,6 @@ function showSessions() {
       document.getElementById('sessions').innerHTML += sessionString;
     }
     if (sessions.length != 0) {
-      // Add clear sessions button
-      document.getElementById('sessions').innerHTML += '<div id="clearSessions">Remove All Sessions</div>';
       // Assign click listeners to buttons.
       // This needs to be done after the above, otherwise getElementById returns null.
       for (var j = 0; j < sessionIds.length; ++j) {
@@ -80,6 +80,9 @@ function showSessions() {
           loadSession(event.target.id);
         });
       }
+      // Add clear sessions button.
+      document.getElementById('sessions').innerHTML += '<div id="clearSessions">Remove All Sessions</div>';
+      document.getElementById('clearSessions').addEventListener('click', clearSessions);
     }
   });
 }
@@ -92,12 +95,8 @@ function showSessionsConsole() {
   });
 }
 
-function reset() {
-  chrome.storage.local.remove('sessions', function() {
-    chrome.storage.local.get('sessions', function(items) {
-      showSessions();
-    });
-  });
+function clearSessions() {
+  chrome.storage.local.remove('sessions', showSessions);
 }
 
 function loadSession(sessionId) {
