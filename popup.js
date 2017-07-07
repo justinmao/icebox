@@ -50,33 +50,33 @@ function showSessions() {
     if (sessions == null) {
       sessions = {};
     }
+    var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
       document.getElementById("emptySessions").style.display = "none";
       var session = sessions[i];
       var sessionString = '<div id="' + session.id + '" class="session">';
-      var sessionIds = [];
       // Build append string.
       sessionIds.push(session.id.toString());
-      var iconCount = 0;
       for (var j = 0; j < session.tabs.length; ++j) {
         var tab = session.tabs[j];
         // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
         if (tab.favIconUrl != null) {
           if (!tab.favIconUrl.includes("chrome://")) {
             sessionString += '<img class="tab" src=' + tab.favIconUrl + '>';
-            ++iconCount;
           }
         }
       }
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
+    }
+    if (sessions.length != 0) {
+      // Add clear sessions button
+      document.getElementById('sessions').innerHTML += '<div id="clearSessions">Remove All Sessions</div>';
       // Assign click listeners to buttons.
       // This needs to be done after the above, otherwise getElementById returns null.
       for (var j = 0; j < sessionIds.length; ++j) {
         sessionId = sessionIds[j];
-        console.log(sessionId);
         document.getElementById(sessionId).addEventListener('click', function(event) {
-          console.log(event.target);
           loadSession(event.target.id);
         });
       }
@@ -92,11 +92,9 @@ function showSessionsConsole() {
   });
 }
 
-// For debug/development use.
 function reset() {
   chrome.storage.local.remove('sessions', function() {
     chrome.storage.local.get('sessions', function(items) {
-      console.log("Reset!");
       showSessions();
     });
   });
@@ -108,8 +106,6 @@ function loadSession(sessionId) {
     var urlsToLoad = [];
     var targetSession;
     // Find the session matching the ID.
-    console.log(sessions);
-    console.log(sessionId);
     for (var i = 0; i < sessions.length; ++i) {
       var session = sessions[i];
       if (session.id == parseInt(sessionId)) {
