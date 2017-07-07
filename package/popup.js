@@ -45,12 +45,12 @@ function showSessions() {
     // Pass an empty object if no sessions are found.
     if (sessions == undefined || sessions.length == 0) {
       sessions = {length: 0};
-      document.getElementById('empty-sessions').style.display = "block";
-      document.getElementById('clear-sessions').style.display = "none";
+      document.getElementById('empty-sessions').style.display = 'block';
+      document.getElementById('clear-sessions').style.display = 'none';
     }
     var sessionIds = [];
     for (var i = 0; i < sessions.length; ++i) {
-      document.getElementById('empty-sessions').style.display = "none";
+      document.getElementById('empty-sessions').style.display = 'none';
       var session = sessions[i];
       var sessionString = '<div id="' + session.id + '" class="session">';
       // Build append string.
@@ -59,7 +59,7 @@ function showSessions() {
         var tab = session.tabs[j];
         // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
         if (tab.favIconUrl != null) {
-          if (!tab.favIconUrl.includes("chrome://")) {
+          if (!tab.favIconUrl.includes('chrome://')) {
             sessionString += '<img class="tab" src=' + tab.favIconUrl + '>';
           }
         }
@@ -78,7 +78,7 @@ function showSessions() {
         });
       }
       // Add clear sessions button.
-      document.getElementById('clear-sessions').style.display = "block";
+      document.getElementById('clear-sessions').style.display = 'block';
       document.getElementById('clear-sessions').addEventListener('click', clearSessions);
     }
   });
@@ -95,8 +95,8 @@ function showSessionsConsole() {
 function clearSessions() {
   document.getElementById('clear-sessions').innerHTML = 'Click me again to confirm!';
   // Update button style.
-  document.getElementById("clear-sessions").style.background = "#E55151";
-  document.getElementById("clear-sessions").style.borderColor = "#E55151";
+  document.getElementById('clear-sessions').style.background = '#E55151';
+  document.getElementById('clear-sessions').style.borderColor = '#E55151';
   document.getElementById('clear-sessions').addEventListener('click', function() {
     chrome.storage.local.remove('sessions', showSessions);
   });
@@ -141,7 +141,7 @@ function loadSession(sessionId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("icebox").addEventListener('click', storeCurrentSession);
+  document.getElementById('icebox').addEventListener('click', storeCurrentSession);
 
 });
 
