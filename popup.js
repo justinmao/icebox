@@ -51,16 +51,14 @@ function showSessions() {
       sessions = {};
     }
     for (var i = 0; i < sessions.length; ++i) {
+      document.getElementById("emptySessions").style.display = "none";
       var session = sessions[i];
-      var sessionString = '<div class="session">';
+      var sessionString = '<div id="' + session.id + '" class="session">';
       var sessionIds = [];
       // Build append string.
-      sessionString += '<button id="' + session.id + '" class="sessionButton">'
-        + '^'
-        + '</button>';
       sessionIds.push(session.id.toString());
       var iconCount = 0;
-      for (var j = 0; j < session.tabs.length && iconCount < 10; ++j) {
+      for (var j = 0; j < session.tabs.length; ++j) {
         var tab = session.tabs[j];
         // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
         if (tab.favIconUrl != null) {
@@ -70,16 +68,13 @@ function showSessions() {
           }
         }
       }
-      // Display dots if icons overflow.
-      if (session.tabs.length > 10) {
-        sessionString += '<div class="extraTabs"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></div>';
-      }
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
       // Assign click listeners to buttons.
       // This needs to be done after the above, otherwise getElementById returns null.
       for (var j = 0; j < sessionIds.length; ++j) {
         sessionId = sessionIds[j];
+        console.log(sessionId);
         document.getElementById(sessionId).addEventListener('click', function(event) {
           console.log(event.target);
           loadSession(event.target.id);
@@ -150,12 +145,9 @@ function loadSession(sessionId) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById("storeCurrentSession").addEventListener('click', storeCurrentSession);
-  document.getElementById("showSessions").addEventListener('click', showSessions);
-  document.getElementById("showSessionsConsole").addEventListener('click', showSessionsConsole);
-  document.getElementById("clearSessions").addEventListener('click', reset);
+  document.getElementById("icebox").addEventListener('click', storeCurrentSession);
 });
 
-window.addEventListener('load', function () {
+window.onload = function() {
   showSessions();
-});
+};
