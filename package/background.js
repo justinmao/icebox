@@ -62,14 +62,17 @@ function storeCurrentSession() {
               // Save the updated session list in persistent storage.
               chrome.storage.local.set({'sessions': sessions}, function() {
                 chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
+                  // TESTING: Open a new window regardless of other windows being present.
+                  chrome.windows.create();
                   // Open a new window if no other windows are open.
-                  chrome.windows.getAll(function(openWindows) {
-                    if (openWindows.length == 1) {
-                      chrome.windows.create();
-                    }
-                  });
+                  // chrome.windows.getAll(function(openWindows) {
+                  //   if (openWindows.length == 1) {
+                  //     chrome.windows.create();
+                  //   }
+                  // });
                   chrome.windows.remove(currentWindow.id);
                 });
+
               });
             });
           }
