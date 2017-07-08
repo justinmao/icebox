@@ -81,6 +81,17 @@ function storeCurrentSession() {
   });
 }
 
+function reopenLastSession() {
+  chrome.storage.local.get('sessions', function(items) {
+    var sessions = items.sessions;
+    if (sessions != undefined && sessions.length > 0) {
+      var lastSessionId = sessions[sessions.length - 1].id;
+      console.log(lastSessionId);
+      loadSession(lastSessionId);
+    }
+  });
+}
+
 function showSessions() {
   console.log("Showing sessions");
   chrome.storage.local.get('sessions', function(items) {
@@ -264,8 +275,9 @@ function kmeans(data, k) {
 }
 
 chrome.commands.onCommand.addListener(function(command) {
-  console.log(command);
-  if (command === "store-current-session") {
+  if (command === 'store-current-session') {
     storeCurrentSession();
+  } else if (command === 'reopen-last-session') {
+    reopenLastSession();
   }
 });

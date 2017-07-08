@@ -25,6 +25,12 @@
   ],
 
   "commands": {
+    "reopen-last-session": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A"
+      },
+      "description": "Reopen the last stored session"
+    },
     "store-current-session": {
       "suggested_key": {
         "default": "Ctrl+Shift+E"
