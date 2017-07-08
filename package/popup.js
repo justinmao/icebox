@@ -35,7 +35,7 @@ function storeCurrentSession() {
             var g = Math.floor(averageColor[0][1]);
             var b = Math.floor(averageColor[0][2]);
             // Lower alpha for a pastelly kind of background color.
-            var averageColorString = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.7)';
+            var averageColorString = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)';
             console.log(averageColorString);
             // Retrieve existing sessions from persistent storage.
             chrome.storage.local.get('sessions', function(items) {
@@ -109,8 +109,9 @@ function showSessions() {
       }
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
-      //document.getElementById(session.id).style.background = session.averageColor;
-      document.getElementById(session.id).style.borderColor = session.averageColor;
+      document.getElementById(session.id).style.background = session.averageColor;
+      // Disable border.
+      document.getElementById(session.id).style.borderColor = 'rgba(0, 0, 0, 0)';
     }
     if (sessions.length != 0) {
       // Assign click listeners to buttons.
