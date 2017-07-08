@@ -1,39 +1,82 @@
 function storeCurrentSession() {
   chrome.windows.getCurrent(function(win) {
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
-      // Retrieve existing sessions from persistent storage.
-      chrome.storage.local.get('sessions', function(items) {
-        var sessions = items.sessions;
-        var session = {
-          // Placeholder ID generation.
-          id: Date.now(),
-          tabs: tabs,
-          height: win.height,
-          incognito: win.incognito,
-          left: win.left,
-          top: win.top
+      // Prepare favicon urls for image analysis.
+      var favIconUrls = [];
+      for (var i = 0; i < tabs.length; ++i) {
+        var tab = tabs[i];
+        // Skip icons of pages without favicons and pages with chrome theme favicons.
+        if (tab.favIconUrl != null) {
+          if (!tab.favIconUrl.includes('chrome://')) {
+            favIconUrls.push(tab.favIconUrl);
+          }
         }
-        // Initialize if no existing sessions are found.
-        if (sessions == null) {
-          sessions = [session];
-        } else {
-          sessions.push(session);
-        }
-        // Save the updated session list in persistent storage.
-        chrome.storage.local.set({'sessions': sessions}, function() {
-          // Call view update function.
-          showSessions();
-          chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
-            // Open a new window if no other windows are open.
-            chrome.windows.getAll(function(openWindows) {
-              if (openWindows.length == 1) {
-                chrome.windows.create();
+      }
+      // Begin image average color analysis (this is done here to avoid callback issues).
+      var data = [];
+      for (var j = 0; j < favIconUrls.length; ++j) {
+        var imageUrl = favIconUrls[j];
+        var canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        var context = canvas.getContext('2d');
+        var img = new Image();
+        img.onload = function() {
+          context.drawImage(this, 0, 0, 16, 16);
+          var imageData = context.getImageData(0, 0, 16, 16).data;
+          var channels = imageData.length / (canvas.width * canvas.height);
+          for (var d = 0; d < imageData.length; d+= channels) {
+            data.push(imageData.slice(d, d + channels));
+          }
+          // Run data processing here (else asynchronous image loading will cause issues).
+          if (data.length == favIconUrls.length * 256) {
+            var averageColor = kmeans(data, 1);
+            var r = Math.floor(averageColor[0][0]);
+            var g = Math.floor(averageColor[0][1]);
+            var b = Math.floor(averageColor[0][2]);
+            // Lower alpha for a pastelly kind of background color.
+            var averageColorString = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.7)';
+            console.log(averageColorString);
+            // Retrieve existing sessions from persistent storage.
+            chrome.storage.local.get('sessions', function(items) {
+              var sessions = items.sessions;
+              var session = {
+                // Placeholder ID generation.
+                id: Date.now(),
+                tabs: tabs,
+                height: win.height,
+                incognito: win.incognito,
+                left: win.left,
+                top: win.top,
+                averageColor: averageColorString
               }
+
+              // Initialize if no existing sessions are found.
+              if (sessions == null) {
+                sessions = [session];
+              } else {
+                sessions.push(session);
+              }
+              // Save the updated session list in persistent storage.
+              chrome.storage.local.set({'sessions': sessions}, function() {
+                // Call view update function.
+                showSessions();
+                chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
+                  // Open a new window if no other windows are open.
+                  chrome.windows.getAll(function(openWindows) {
+                    if (openWindows.length == 1) {
+                      chrome.windows.create();
+                    }
+                  });
+                  chrome.windows.remove(currentWindow.id);
+                });
+              });
             });
-            chrome.windows.remove(currentWindow.id);
-          });
-        });
-      });
+          }
+        }
+        img.crossOrigin = '';
+        img.src = imageUrl;
+      }
     });
   });
 }
@@ -66,6 +109,8 @@ function showSessions() {
       }
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
+      //document.getElementById(session.id).style.background = session.averageColor;
+      document.getElementById(session.id).style.borderColor = session.averageColor;
     }
     if (sessions.length != 0) {
       // Assign click listeners to buttons.
