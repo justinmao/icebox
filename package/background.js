@@ -1,9 +1,8 @@
-// Tis but a temporary solution to accessing this function in a background script...
-// Hopefully.
-// (WARNING: DUPLICATE CODE)
 function storeCurrentSession() {
+  console.log("storing current sesion");
   chrome.windows.getCurrent(function(win) {
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
+      console.log(tabs);
       // Prepare favicon urls for image analysis.
       var favIconUrls = [];
       for (var i = 0; i < tabs.length; ++i) {
@@ -82,6 +81,114 @@ function storeCurrentSession() {
   });
 }
 
+function showSessions() {
+  console.log("Showing sessions");
+  chrome.storage.local.get('sessions', function(items) {
+    var sessions = items.sessions;
+    document.getElementById('sessions').innerHTML = '';
+    // Pass an empty object if no sessions are found.
+    if (sessions == undefined || sessions.length == 0) {
+      sessions = {length: 0};
+      document.getElementById('empty-sessions').style.display = 'block';
+      document.getElementById('clear-sessions').style.display = 'none';
+    }
+    var sessionIds = [];
+    for (var i = 0; i < sessions.length; ++i) {
+      document.getElementById('empty-sessions').style.display = 'none';
+      var session = sessions[i];
+      var sessionString = '<div id="' + session.id + '" class="session">';
+      // Build append string.
+      sessionIds.push(session.id.toString());
+      for (var j = 0; j < session.tabs.length; ++j) {
+        var tab = session.tabs[j];
+        // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
+        if (tab.favIconUrl != null) {
+          if (!tab.favIconUrl.includes('chrome://')) {
+            sessionString += '<img class="tab" src=' + tab.favIconUrl + '>';
+          }
+        }
+      }
+      sessionString += '</div>';
+      document.getElementById('sessions').innerHTML += sessionString;
+      document.getElementById(session.id).style.background = session.averageColor;
+      // Disable border.
+      document.getElementById(session.id).style.borderColor = 'rgba(0, 0, 0, 0)';
+    }
+    if (sessions.length != 0) {
+      // Assign click listeners to buttons.
+      // This needs to be done after the above, otherwise getElementById returns null.
+      for (var j = 0; j < sessionIds.length; ++j) {
+        sessionId = sessionIds[j];
+        document.getElementById(sessionId).addEventListener('click', function(event) {
+          console.log("Clicked" + sessionId);
+          loadSession(event.target.id);
+        });
+      }
+      // Add clear sessions button.
+      document.getElementById('clear-sessions').style.display = 'block';
+      document.getElementById('clear-sessions').addEventListener('click', clearSessions);
+    }
+  });
+}
+
+// For debug/development use.
+function showSessionsConsole() {
+  chrome.storage.local.get('sessions', function(items) {
+    sessions = items.sessions;
+    console.log(sessions);
+  });
+}
+
+function clearSessions() {
+  document.getElementById('clear-sessions').innerHTML = 'Click me again to confirm!';
+  // Update button style.
+  document.getElementById('clear-sessions').style.background = '#E55151';
+  document.getElementById('clear-sessions').style.borderColor = '#E55151';
+  document.getElementById('clear-sessions').addEventListener('click', function() {
+    chrome.storage.local.remove('sessions', showSessions);
+  });
+}
+
+function loadSession(sessionId) {
+  chrome.storage.local.get('sessions', function(items) {
+    var sessions = items.sessions;
+    var urlsToLoad = [];
+    var targetSession;
+    // Find the session matching the ID.
+    for (var i = 0; i < sessions.length; ++i) {
+      var session = sessions[i];
+      if (session.id == parseInt(sessionId)) {
+        targetSession = session;
+        break;
+      }
+    }
+    // Create a new window with the session urls.
+    for (var j = 0; j < targetSession.tabs.length; ++j) {
+      var tab = targetSession.tabs[j];
+      urlsToLoad.push(tab.url);
+    }
+    chrome.windows.create({
+      url: urlsToLoad,
+      height: targetSession.height,
+      incognito: targetSession.incognito,
+      left: targetSession.left,
+      top: targetSession.top
+    }, function() {
+      // Update the saved session list.
+      var sessionIndex = sessions.indexOf(targetSession)
+      if (sessionIndex >= 0) {
+        sessions.splice(sessionIndex, 1);
+        chrome.storage.local.set({'sessions': sessions}, function() {
+          // Call view update function.
+          showSessions();
+        });
+      }
+    });
+  });
+}
+
+// K-means clustering algorithm adapted from my other project
+// https://github.com/justinmao/palette
 function arraysEqual(a1, a2) {
   if (a1.length !== a2.length) return false;
   for (var i = 0; i < a1.length; ++i) {
