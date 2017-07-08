@@ -1,8 +1,6 @@
 function storeCurrentSession() {
-  console.log("storing current sesion");
   chrome.windows.getCurrent(function(win) {
     chrome.tabs.getAllInWindow(win.id, function(tabs) {
-      console.log(tabs);
       // Prepare favicon urls for image analysis.
       var favIconUrls = [];
       for (var i = 0; i < tabs.length; ++i) {
@@ -38,7 +36,6 @@ function storeCurrentSession() {
             var b = Math.floor(averageColor[0][2]);
             // Lower alpha for a pastelly kind of background color.
             var averageColorString = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)';
-            console.log(averageColorString);
             // Retrieve existing sessions from persistent storage.
             chrome.storage.local.get('sessions', function(items) {
               var sessions = items.sessions;
@@ -61,17 +58,18 @@ function storeCurrentSession() {
               }
               // Save the updated session list in persistent storage.
               chrome.storage.local.set({'sessions': sessions}, function() {
-                chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
-                  // TESTING: Open a new window regardless of other windows being present.
-                  chrome.windows.create();
-                  // Open a new window if no other windows are open.
-                  // chrome.windows.getAll(function(openWindows) {
-                  //   if (openWindows.length == 1) {
-                  //     chrome.windows.create();
-                  //   }
-                  // });
-                  chrome.windows.remove(currentWindow.id);
-                });
+                // TESTING: Remove all tabs instead of creating a new window.
+                chrome.tabs.create({});
+                for (var t = tabs.length - 1; t > -1; --t) {
+                  chrome.tabs.remove(tabs[t].id);
+                }
+                // Open a new window if no other windows are open.
+                // chrome.windows.getAll(function(openWindows) {
+                //   if (openWindows.length == 1) {
+                //     chrome.windows.create();
+                //   }
+                // });
+                // chrome.windows.remove(win.id);
 
               });
             });
@@ -89,14 +87,12 @@ function reopenLastSession() {
     var sessions = items.sessions;
     if (sessions != undefined && sessions.length > 0) {
       var lastSessionId = sessions[sessions.length - 1].id;
-      console.log(lastSessionId);
       loadSession(lastSessionId);
     }
   });
 }
 
 function showSessions() {
-  console.log("Showing sessions");
   chrome.storage.local.get('sessions', function(items) {
     var sessions = items.sessions;
     document.getElementById('sessions').innerHTML = '';
@@ -134,7 +130,6 @@ function showSessions() {
       for (var j = 0; j < sessionIds.length; ++j) {
         sessionId = sessionIds[j];
         document.getElementById(sessionId).addEventListener('click', function(event) {
-          console.log("Clicked" + sessionId);
           loadSession(event.target.id);
         });
       }
@@ -176,28 +171,37 @@ function loadSession(sessionId) {
         break;
       }
     }
-    // Create a new window with the session urls.
     for (var j = 0; j < targetSession.tabs.length; ++j) {
       var tab = targetSession.tabs[j];
       urlsToLoad.push(tab.url);
     }
-    chrome.windows.create({
-      url: urlsToLoad,
-      height: targetSession.height,
-      incognito: targetSession.incognito,
-      left: targetSession.left,
-      top: targetSession.top
-    }, function() {
-      // Update the saved session list.
-      var sessionIndex = sessions.indexOf(targetSession)
-      if (sessionIndex >= 0) {
-        sessions.splice(sessionIndex, 1);
-        chrome.storage.local.set({'sessions': sessions}, function() {
-          // Call view update function.
-          showSessions();
-        });
-      }
+    // Load tabs in current window if only a "new tab" tab exists.
+    chrome.windows.getCurrent(function(win) {
+      chrome.tabs.getAllInWindow(win.id, function(tabs) {
+        if (tabs.length == 1 && tabs[0].url === "chrome://newtab/") {
+          for (var t = 0; t < urlsToLoad.length; ++t) {
+            chrome.tabs.create({url: urlsToLoad[t]});
+          }
+          chrome.tabs.remove(tabs[0].id);
+        // Otherwise, create a new window with the session urls.
+        } else {
+          chrome.windows.create({
+            url: urlsToLoad,
+            height: targetSession.height,
+            incognito: targetSession.incognito,
+            left: targetSession.left,
+            top: targetSession.top
+          });
+        }
+        // Update the saved session list.
+        var sessionIndex = sessions.indexOf(targetSession)
+        if (sessionIndex >= 0) {
+          sessions.splice(sessionIndex, 1);
+          chrome.storage.local.set({'sessions': sessions});
+        }
+      });
     });
+
   });
 }
 
