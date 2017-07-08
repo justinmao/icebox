@@ -59,8 +59,6 @@ function storeCurrentSession() {
               }
               // Save the updated session list in persistent storage.
               chrome.storage.local.set({'sessions': sessions}, function() {
-                // Call view update function.
-                showSessions();
                 chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, function(currentWindow) {
                   // Open a new window if no other windows are open.
                   chrome.windows.getAll(function(openWindows) {

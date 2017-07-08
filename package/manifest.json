@@ -13,10 +13,23 @@
     "default_popup": "popup.html"
   },
 
+  "background": {
+    "scripts": ["background.js"]
+  },
+
   "permissions": [
     "tabs",
     "storage",
     "http://*/",
     "https://*/"
-  ]
+  ],
+
+  "commands": {
+    "store-current-session": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "Store the current browsing session"
+    }
+  }
 }
