@@ -111,7 +111,7 @@ function processColors(r, g, b) {
     b = Math.floor(b * (1 - invRatio));
   }
 
-  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)';
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.28)';
 }
 
 function reopenLastSession() {
