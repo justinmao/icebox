@@ -34,8 +34,8 @@ function storeCurrentSession() {
             var r = Math.floor(averageColor[0][0]);
             var g = Math.floor(averageColor[0][1]);
             var b = Math.floor(averageColor[0][2]);
-            // Lower alpha for a pastelly kind of background color.
-            var averageColorString = 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)';
+            // Process the color to fit the theme.
+            var averageColorString = processColors(r, g, b);
             // Retrieve existing sessions from persistent storage.
             chrome.storage.local.get('sessions', function(items) {
               var sessions = items.sessions;
@@ -80,6 +80,38 @@ function storeCurrentSession() {
       }
     });
   });
+}
+
+function processColors(r, g, b) {
+
+  // If the difference between the max and the minimum is high,
+  // we don't need to do much.
+  // Otherwise, if the difference is low, the color will be grayish,
+  // so we increase the difference in relation to how big the difference is
+  // to 255 (the max difference).
+  var ADJUSTMENT_FACTOR = 0.75;
+  var difference = Math.max(r, g, b) - Math.min(r, g, b);
+  var ratio = difference / 255;
+  var invRatio = (1 - ratio) * ADJUSTMENT_FACTOR;
+
+  var avg = (r + g + b) / 3;
+  if (r > avg) {
+    r = Math.floor((255 - r) * invRatio + r);
+  } else if (r < avg) {
+    r = Math.floor(r * (1 - invRatio));
+  }
+  if (g > avg) {
+    g = Math.floor((255 - g) * invRatio + g);
+  } else if (r < avg) {
+    g = Math.floor(g * (1 - invRatio));
+  }
+  if (b > avg) {
+    b = Math.floor((255 - b) * invRatio + b);
+  } else if (r < avg) {
+    b = Math.floor(b * (1 - invRatio));
+  }
+
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)';
 }
 
 function reopenLastSession() {
