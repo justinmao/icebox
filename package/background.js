@@ -124,24 +124,25 @@ function showSessions() {
   chrome.storage.local.get('sessions', function(items) {
     var sessions = items.sessions;
     document.getElementById('sessions').innerHTML = '';
-    // Pass an empty object if no sessions are found.
+    // Display empty sessions message if no sessions are found.
     if (sessions == undefined || sessions.length == 0) {
       sessions = {length: 0};
       document.getElementById('empty-sessions').style.display = 'block';
       document.getElementById('clear-sessions').style.display = 'none';
     }
-    var sessionIds = [];
+
     for (var i = 0; i < sessions.length; ++i) {
       document.getElementById('empty-sessions').style.display = 'none';
       var session = sessions[i];
       var sessionString = '<div id="' + session.id + '" class="session">';
+      var iconCount = 0;
       // Build append string.
-      sessionIds.push(session.id.toString());
-      for (var j = 0; j < session.tabs.length; ++j) {
+      for (var j = 0; j < session.tabs.length && j < 12; ++j) {
         var tab = session.tabs[j];
         // Skip displaying icons of pages without favicons and pages with chrome theme favicons.
         if (tab.favIconUrl != null) {
           if (!tab.favIconUrl.includes('chrome://')) {
+            iconCount += 1;
             sessionString += '<img class="tab" src=' + tab.favIconUrl + '>';
           }
         }
@@ -149,14 +150,20 @@ function showSessions() {
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
       document.getElementById(session.id).style.background = session.averageColor;
-      // Disable border.
-      document.getElementById(session.id).style.borderColor = 'rgba(0, 0, 0, 0)';
+      // Adjust width based on tab count.
+      var SESSION_WIDTH = 80;
+      if (iconCount > 8) {
+        document.getElementById(session.id).style.width = (SESSION_WIDTH * 3).toString() + "px";
+      } else if (iconCount > 3) {
+        document.getElementById(session.id).style.width = (SESSION_WIDTH * 2).toString() + "px";
+      }
     }
+
     if (sessions.length != 0) {
       // Assign click listeners to buttons.
       // This needs to be done after the above, otherwise getElementById returns null.
-      for (var j = 0; j < sessionIds.length; ++j) {
-        sessionId = sessionIds[j];
+      for (var j = 0; j < sessions.length; ++j) {
+        sessionId = sessions[j].id;
         document.getElementById(sessionId).addEventListener('click', function(event) {
           loadSession(event.target.id);
         });
@@ -179,8 +186,7 @@ function showSessionsConsole() {
 function clearSessions() {
   document.getElementById('clear-sessions').innerHTML = 'Click me again to confirm!';
   // Update button style.
-  document.getElementById('clear-sessions').style.background = '#E55151';
-  document.getElementById('clear-sessions').style.borderColor = '#E55151';
+  document.getElementById('clear-sessions').style.color = 'red';
   document.getElementById('clear-sessions').addEventListener('click', function() {
     chrome.storage.local.remove('sessions', showSessions);
   });
