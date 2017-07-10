@@ -15,7 +15,7 @@ body {
   width: 100%;
   height: 122px;
   background-color:white;
-  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0px -5px 5px rgba(0, 0, 0, 0.35));
 }
 
 #icebox {
@@ -90,7 +90,7 @@ body {
   width: 100%;
   color: #666666;
   background-color: white;
-  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.35));
 }
 
 #clear-sessions:hover {
