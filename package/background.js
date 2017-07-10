@@ -58,19 +58,11 @@ function storeCurrentSession() {
               }
               // Save the updated session list in persistent storage.
               chrome.storage.local.set({'sessions': sessions}, function() {
-                // TESTING: Remove all tabs instead of creating a new window.
+              // Remove all tabs instead and create a new tab.
                 chrome.tabs.create({});
                 for (var t = tabs.length - 1; t > -1; --t) {
                   chrome.tabs.remove(tabs[t].id);
                 }
-                // Open a new window if no other windows are open.
-                // chrome.windows.getAll(function(openWindows) {
-                //   if (openWindows.length == 1) {
-                //     chrome.windows.create();
-                //   }
-                // });
-                // chrome.windows.remove(win.id);
-
               });
             });
           }
@@ -89,29 +81,33 @@ function processColors(r, g, b) {
   // Otherwise, if the difference is low, the color will be grayish,
   // so we increase the difference in relation to how big the difference is
   // to 255 (the max difference).
-  var ADJUSTMENT_FACTOR = 0.75;
+  var ADJUSTMENT_FACTOR = 1;
   var difference = Math.max(r, g, b) - Math.min(r, g, b);
-  var ratio = difference / 255;
-  var invRatio = (1 - ratio) * ADJUSTMENT_FACTOR;
+  var ratio = (1 - ((1 - ADJUSTMENT_FACTOR) * (difference / 255))) * ADJUSTMENT_FACTOR;
 
+  // console.log("Adjustment ratio is", ratio);
+  // console.log("Original RGB:", r, g, b);
+
+  // Do not adjust the middle value!
   var avg = (r + g + b) / 3;
-  if (r > avg) {
-    r = Math.floor((255 - r) * invRatio + r);
-  } else if (r < avg) {
-    r = Math.floor(r * (1 - invRatio));
+  if (r > avg && r == Math.max(r, g, b)) {
+    r = Math.floor((255 - r) * ratio + r);
+  } else if (r < avg && r == Math.min(r, g, b)) {
+    r = Math.floor(r * (1 - ratio));
   }
-  if (g > avg) {
-    g = Math.floor((255 - g) * invRatio + g);
-  } else if (r < avg) {
-    g = Math.floor(g * (1 - invRatio));
+  if (g > avg && g == Math.max(r, g, b)) {
+    g = Math.floor((255 - g) * ratio + g);
+  } else if (g < avg && g == Math.min(r, g, b)) {
+    g = Math.floor(g * (1 - ratio));
   }
-  if (b > avg) {
-    b = Math.floor((255 - b) * invRatio + b);
-  } else if (r < avg) {
-    b = Math.floor(b * (1 - invRatio));
+  if (b > avg && b == Math.max(r, g, b)) {
+    b = Math.floor((255 - b) * ratio + b);
+  } else if (b < avg && b == Math.min(r, g, b)) {
+    b = Math.floor(b * (1 - ratio));
   }
+  // console.log("New RGB:", r, g, b);
 
-  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.28)';
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.6)';
 }
 
 function reopenLastSession() {
