@@ -129,6 +129,7 @@ function showSessions() {
       sessions = {length: 0};
       document.getElementById('empty-sessions').style.display = 'block';
       document.getElementById('clear-sessions').style.display = 'none';
+      document.getElementById('icebox-container').style.filter = 'none';
     }
 
     for (var i = 0; i < sessions.length; ++i) {
