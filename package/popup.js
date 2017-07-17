@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('icebox').addEventListener('click', storeCurrentSession);
+  document.getElementById('save-button').addEventListener('click', storeCurrentSession);
 });
 
 window.onload = function() {

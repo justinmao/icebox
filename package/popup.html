@@ -2,13 +2,15 @@
 <html>
   <head>
     <title>Icebox</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="popup.css">
     <script src="popup.js"></script>
     <script src="background.js"></script>
   </head>
   <body>
-    <div id="icebox-container">
-      <div id="icebox"></div>
+    <div id="icebox">
+      <h1>ICEBOX</h1>
+      <p><i id="save-button" class="fa fa-download" aria-hidden="true"></i></p>
     </div>
     <div id="main">
       <div id="sessions"></div>
@@ -17,7 +19,7 @@
         <p>Click the icon above or press<br><b>CTRL-SHIFT-E</b> to store your<br>session for later.</p>
         <p>Click any stored session to open it, or press <b>CTRL-SHIFT-A</b> to reopen your last stored session.</p>
       </div>
-      <div id="clear-sessions">Remove All Sessions</div>
+      <div id="clear-sessions">REMOVE ALL SESSIONS</div>
     </div>
   </body>
 </html>

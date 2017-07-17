@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
 html {
   background-color: white;
 }
@@ -7,37 +9,35 @@ body {
   margin: 0;
 }
 
-#icebox-container {
+#icebox {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 122px;
-  background-color:white;
-  filter: drop-shadow(0px -5px 5px rgba(0, 0, 0, 0.35));
+  height: 36px;
+  background-color: white;
+  filter: drop-shadow(0px -5px 5px rgba(0, 0, 0, 0.25));
 }
 
-#icebox {
-  height: 91px;
-  width: 81px;
-  background-image: url('assets/icebox-closed-arrow.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  image-rendering: pixelated;
-  transition: .2s;
+#icebox h1 {
+  margin-left: 12px;
+  display: inline;
+  font-size: 1.2em;
+  color: #505050;
+  font-weight: normal;
+  font-family: 'Lato', sans-serif;
 }
 
-#icebox:hover {
-  background-image: url('assets/icebox-open-save.png');
-  cursor: pointer;
+#icebox p {
+  margin-right: 12px;
+  display: inline;
+  font-size: 1.2em;
+  color: #505050;
+  font-weight: normal;
 }
 
-#icebox:active {
-  background-image: url('assets/icebox-open-save-onclick.png');
-}
-
-#icebox:hover {
+#save-button:hover {
   cursor: pointer;
 }
 
@@ -59,16 +59,15 @@ body {
 .session {
   display: flex;
   flex-direction: row;
-  width: 70px;
-  height: 70px;
+  width: calc(100% - 10px);
+  height: 48px;
   justify-content: center;
   align-content: center;
   align-items: center;
   flex-wrap: wrap;
   flex-grow: 1;
   flex-shrink: 0;
-  padding: 10px;
-  background-color: white;
+  padding: 5px;
 }
 
 .session:hover {
@@ -88,9 +87,9 @@ body {
   height: 30px;
   line-height: 30px;
   width: 100%;
-  color: #666666;
+  color: #505050;
   background-color: white;
-  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.25));
 }
 
 #clear-sessions:hover {
@@ -100,7 +99,7 @@ body {
 #empty-sessions {
   padding-left: 24px;
   padding-right: 24px;
-  color: #808080;
+  color: #505050;
   font-size: 9pt;
   text-align: center;
 }

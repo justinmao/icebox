@@ -129,7 +129,7 @@ function showSessions() {
       sessions = {length: 0};
       document.getElementById('empty-sessions').style.display = 'block';
       document.getElementById('clear-sessions').style.display = 'none';
-      document.getElementById('icebox-container').style.filter = 'none';
+      document.getElementById('icebox').style.filter = 'none';
     }
 
     for (var i = 0; i < sessions.length; ++i) {
@@ -151,13 +151,13 @@ function showSessions() {
       sessionString += '</div>';
       document.getElementById('sessions').innerHTML += sessionString;
       document.getElementById(session.id).style.background = session.averageColor;
-      // Adjust width based on tab count.
-      var SESSION_WIDTH = 80;
-      if (iconCount > 8) {
-        document.getElementById(session.id).style.width = (SESSION_WIDTH * 3).toString() + "px";
-      } else if (iconCount > 3) {
-        document.getElementById(session.id).style.width = (SESSION_WIDTH * 2).toString() + "px";
-      }
+      // Adjust width based on tab count (for tiling style).
+      // var SESSION_WIDTH = 70;
+      // if (iconCount > 8) {
+      //   document.getElementById(session.id).style.width = (SESSION_WIDTH * 3).toString() + "px";
+      // } else if (iconCount > 3) {
+      //   document.getElementById(session.id).style.width = (SESSION_WIDTH * 2).toString() + "px";
+      // }
     }
 
     if (sessions.length != 0) {
